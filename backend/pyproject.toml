@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Conversational-RAG FastAPI backend"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.111.0",
+  "uvicorn[standard]>=0.30.0",
+  "pydantic>=2.7.0",
+  "pydantic-settings>=2.3.0",
+  "PyPDF2>=3.0.1",
+  "sentence-transformers>=5.0.0",
+  "pinecone>=9.0.0",
+  "groq>=0.26.0"
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.2.0", "ruff>=0.5.0"]
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.ruff]
+line-length = 100
