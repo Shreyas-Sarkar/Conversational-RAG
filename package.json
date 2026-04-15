@@ -1,0 +1,16 @@
+{
+  "name": "conversational-rag",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  },
+  "scripts": {
+    "dev": "pnpm --dir frontend dev",
+    "dev:frontend": "pnpm --dir frontend dev",
+    "dev:backend": "cd backend && if [ -x .venv/bin/uvicorn ]; then .venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000; else python3 -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000; fi",
+    "lint": "pnpm --dir frontend lint && bash backend/scripts/lint.sh",
+    "typecheck": "pnpm --dir frontend typecheck",
+    "format": "pnpm --dir frontend exec prettier --write ."
+  }
+}
