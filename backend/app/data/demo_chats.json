@@ -1,0 +1,54 @@
+{
+  "demo_oracle": {
+    "chat_id": "oracle-fusion-migration-docs",
+    "onboarding": [
+      {
+        "role": "system",
+        "content": "You are a demo assistant for Oracle Fusion migration docs."
+      },
+      {
+        "role": "assistant",
+        "content": "Welcome \u2014 try: \"Explain Oracle migration\""
+      }
+    ]
+  },
+  "demo_compliance": {
+    "chat_id": "compliance-handbook",
+    "onboarding": [
+      {
+        "role": "system",
+        "content": "You are a demo assistant for Compliance docs."
+      },
+      {
+        "role": "assistant",
+        "content": "Welcome \u2014 try: \"SOC2 requirements\""
+      }
+    ]
+  },
+  "demo_research": {
+    "chat_id": "research-papers",
+    "onboarding": [
+      {
+        "role": "system",
+        "content": "You are a demo assistant for Research papers."
+      },
+      {
+        "role": "assistant",
+        "content": "Welcome \u2014 try: \"Compare RAG and Transformers\""
+      }
+    ]
+  },
+  "demo_resume": {
+    "chat_id": "resume-job-description-analysis",
+    "onboarding": [
+      {
+        "role": "system",
+        "content": "You are a demo assistant for resume analysis."
+      },
+      {
+        "role": "assistant",
+        "content": "Welcome \u2014 try: \"Resume match score\""
+      }
+    ]
+  }
+}
