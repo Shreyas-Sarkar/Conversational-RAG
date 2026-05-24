@@ -10,8 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from PyPDF2 import PdfReader
-from pinecone import Pinecone, ServerlessSpec
-from sentence_transformers import SentenceTransformer
+from pinecone import Pinecone
 
 from app.core.config import settings
 
@@ -140,11 +139,6 @@ def _extract_pdf_pages(path: Path) -> list[tuple[int, str]]:
 
 
 @lru_cache(maxsize=1)
-def _embedding_model() -> SentenceTransformer:
-    return SentenceTransformer(settings.embedding_model_name)
-
-
-@lru_cache(maxsize=1)
 def _pinecone_client() -> Pinecone:
     if not settings.pinecone_api_key:
         raise RuntimeError('PINECONE_API_KEY is required for demo ingestion')
@@ -152,20 +146,16 @@ def _pinecone_client() -> Pinecone:
 
 
 def _ensure_index() -> None:
+    """Guard: verify the integrated index exists. Never creates one."""
     client = _pinecone_client()
     index_name = settings.pinecone_index_name
     if not index_name:
         raise RuntimeError('PINECONE_INDEX_NAME is required for demo ingestion')
-
-    if client.has_index(index_name):
-        return
-
-    client.create_index(
-        name=index_name,
-        dimension=384,
-        metric='cosine',
-        spec=ServerlessSpec(cloud=settings.pinecone_cloud or 'aws', region=settings.pinecone_region or 'us-east-1')
-    )
+    if not client.has_index(index_name):
+        raise RuntimeError(
+            f"Pinecone index '{index_name}' does not exist. "
+            "Configure it with llama-text-embed-v2 via configure_index() first."
+        )
 
 
 def _index_state() -> dict[str, bool]:
@@ -220,19 +210,21 @@ def _build_indexed_chunks(namespace: str, pdf_path: Path) -> list[IndexedChunk]:
     return chunks
 
 
+_UPSERT_BATCH = 96  # Pinecone integrated embeddings max batch size
+
+
 def _upsert_namespace(namespace: str, chunks: list[IndexedChunk]) -> int:
     if not chunks:
         return 0
 
     client = _pinecone_client()
     index = client.Index(settings.pinecone_index_name)
-    model = _embedding_model()
-    texts = [chunk.text for chunk in chunks]
-    vectors = model.encode(texts, show_progress_bar=False, normalize_embeddings=True)
 
-    upsert_payload = []
-    for chunk, vector in zip(chunks, vectors):
-        metadata = {
+    records = [
+        {
+            '_id': chunk.chunk_id,
+            'chunk_text': chunk.text,        # field_map target — Pinecone embeds this
+            'text': chunk.text,              # legacy alias for retriever fallback
             'document_id': chunk.document_id,
             'document_name': chunk.document_name,
             'page_number': chunk.page_number,
@@ -240,13 +232,15 @@ def _upsert_namespace(namespace: str, chunks: list[IndexedChunk]) -> int:
             'source_path': chunk.source_path,
             'namespace': chunk.namespace,
             'file_digest': chunk.file_digest,
-            'chunk_text': chunk.text
         }
-        upsert_payload.append((chunk.chunk_id, vector.tolist() if hasattr(vector, 'tolist') else list(vector), metadata))
-
-    for start in range(0, len(upsert_payload), 100):
-        index.upsert(vectors=upsert_payload[start:start + 100], namespace=namespace)
-    return len(upsert_payload)
+        for chunk in chunks
+    ]
+    for start in range(0, len(records), _UPSERT_BATCH):
+        index.upsert_records(
+            namespace=namespace,
+            records=records[start : start + _UPSERT_BATCH],
+        )
+    return len(records)
 
 
 def _write_demo_chat_seed_file() -> dict[str, dict[str, Any]]:

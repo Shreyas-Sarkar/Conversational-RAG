@@ -33,7 +33,7 @@ def upload_document(payload: UploadRequest) -> dict[str, object]:
     except Exception as exc:
         raise HTTPException(status_code=400, detail='Invalid file payload.') from exc
 
-    namespace = get_chat_namespace(payload.chat_id) or f"{str(user['id'])}/{payload.chat_id}"
+    namespace = (get_chat_namespace(payload.chat_id) or f"{str(user['id'])}_{payload.chat_id}").replace('/', '_')
     try:
         ingest_result = ingest_uploaded_document(
             user_id=str(user['id']),

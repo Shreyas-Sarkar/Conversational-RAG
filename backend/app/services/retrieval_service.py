@@ -95,7 +95,7 @@ def retrieve_context(chat_id: str, message: str, top_k: int, similarity_threshol
         {'id': make_turn_message_id(chat_id, 'assistant', response), 'chat_id': chat_id, 'role': 'assistant', 'content': response, 'sources': sources}
     )
     cache_query(
-        user_id=namespace.split('/')[0] if '/' in namespace else chat_id,
+        user_id=namespace.split('_')[0] if '_' in namespace else (namespace.split('/')[0] if '/' in namespace else chat_id),
         chat_id=chat_id,
         query_hash=query_hash,
         response_text=response,
@@ -107,7 +107,7 @@ def retrieve_context(chat_id: str, message: str, top_k: int, similarity_threshol
             _upsert_row(
                 'retrieval_events',
                 {
-                    'user_id': namespace.split('/')[0] if '/' in namespace else chat_id,
+                    'user_id': namespace.split('_')[0] if '_' in namespace else (namespace.split('/')[0] if '/' in namespace else chat_id),
                     'chat_id': chat_id,
                     'message_id': None,
                     'top_k': int(top_k),

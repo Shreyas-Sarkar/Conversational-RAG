@@ -332,7 +332,7 @@ def create_default_chat(state: dict[str, Any], user_id: str, title: str = 'My Wo
                 'title': title,
                 'pinned': True,
                 'memory_summary': 'Upload documents and start asking questions.',
-                'namespace': f'{user_id}/{chat_id}',
+                'namespace': f'{user_id}_{chat_id}',
                 'is_demo': False
             }
         )
@@ -345,7 +345,7 @@ def create_default_chat(state: dict[str, Any], user_id: str, title: str = 'My Wo
         'title': title,
         'pinned': True,
         'memory_summary': 'Upload documents and start asking questions.',
-        'namespace': f'{user_id}/{chat_id}',
+        'namespace': f'{user_id}_{chat_id}',
         'is_demo': False,
         'created_at': _now_iso(),
         'updated_at': _now_iso()
@@ -497,13 +497,13 @@ def get_chat_namespace(chat_id: str) -> str:
     if _cloud_enabled():
         chat = _cloud_chat_row(chat_id)
         if isinstance(chat, dict):
-            return str(chat.get('namespace', '') or '')
+            return str(chat.get('namespace', '') or '').replace('/', '_')
         return ''
 
     state = load_workspace_state()
     chat = state['chats'].get(chat_id)
     if isinstance(chat, dict):
-        return str(chat.get('namespace', '') or '')
+        return str(chat.get('namespace', '') or '').replace('/', '_')
     return ''
 
 

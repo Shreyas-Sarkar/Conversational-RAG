@@ -24,7 +24,6 @@ class Settings(BaseSettings):
     groq_model_name: str = 'llama-3.3-70b-versatile'
     groq_temperature: float = 0.2
     groq_top_p: float = 0.9
-    embedding_model_name: str = 'sentence-transformers/all-MiniLM-L6-v2'
 
 
 settings = Settings()
