@@ -13,12 +13,18 @@ from app.api.metrics import router as metrics_router
 from app.api.workspace import router as workspace_router
 from app.services.demo_ingest import get_demo_chat_seed_payload, index_demo_docs
 
+from app.core.config import settings
+
 app = FastAPI(title='Conversational-RAG API', version='0.1.0')
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://localhost:3000', 'http://127.0.0.1:3000'],
-    allow_credentials=False,
+    allow_origins=[
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        settings.frontend_url
+    ],
+    allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*']
 )

@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     groq_model_name: str = 'llama-3.3-70b-versatile'
     groq_temperature: float = 0.2
     groq_top_p: float = 0.9
+    frontend_url: str = 'http://localhost:3000'
 
 
 settings = Settings()
