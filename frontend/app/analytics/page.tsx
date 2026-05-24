@@ -76,7 +76,7 @@ export default async function AnalyticsPage() {
               Top queries
             </div>
             <div className="mt-4 space-y-3 text-sm font-black uppercase tracking-[0.08em]">
-              {topQueries.map((query) => (
+              {topQueries.map((query: string) => (
                 <div key={query} className="rounded-[14px] border-2 border-black bg-paper px-3 py-3 shadow-brutal">
                   {query}
                 </div>

@@ -746,7 +746,7 @@ export function WorkspaceShell({ initialChatId }: { initialChatId?: string }) {
               <div className="mt-3 space-y-2">
                 {(bootstrap?.profile_menu ?? []).map((item) =>
                   item.href ? (
-                    <Link key={item.label} href={item.href} className="block rounded-[14px] border-2 border-black bg-paper px-3 py-2 text-sm font-bold shadow-brutal">
+                    <Link key={item.label} href={item.href as any} className="block rounded-[14px] border-2 border-black bg-paper px-3 py-2 text-sm font-bold shadow-brutal">
                       {item.label}
                     </Link>
                   ) : (
